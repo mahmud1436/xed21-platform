@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3001;
 // CORS configuration for production
 const corsOptions = {
     origin: [
-        'https://yourusername.github.io',  // Replace with your GitHub Pages URL
+        'https://mahmud1436.github.io/xed21-platform/',  // Replace with your GitHub Pages URL
         'http://localhost:3000',
         'http://localhost:3001'
     ],
