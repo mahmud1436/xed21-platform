@@ -493,28 +493,51 @@
 
                 <div class="upload-section">
                     <form id="uploadForm">
-                        <label>Grade:</label>
-                        <select name="grade">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                        </select>
-                        <label>Subject:</label>
-                        <input type="text" name="subject" required>
-                        <label>Topic Name:</label>
-                        <input type="text" name="topic" required>
-                        <label>HTML File:</label>
-                        <input type="file" name="file" accept=".html" required>
-                        <button type="submit">Upload</button>
+                        <div class="form-group">
+                            <label for="grade">Grade Level</label>
+                            <div class="grade-selector" id="gradeSelector">
+                                <!-- Grade options will be generated here -->
+                            </div>
+                            <input type="hidden" id="selectedGrade" name="grade" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select Subject</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Science">Science</option>
+                                <option value="EVS">Environmental Studies (EVS)</option>
+                                <option value="English">English</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Social Studies">Social Studies</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="topicName">Topic Name</label>
+                            <input type="text" id="topicName" name="topicName" required 
+                                   placeholder="e.g., Numbers 1 to 9, Fibre to Fabric">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="topicDescription">Topic Description (Optional)</label>
+                            <textarea id="topicDescription" name="topicDescription" rows="3" 
+                                      placeholder="Brief description of the topic content"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>HTML File</label>
+                            <div class="file-input-wrapper">
+                                <label for="topicFile" class="file-input-label">
+                                    Choose HTML File
+                                </label>
+                                <input type="file" id="topicFile" name="topicFile" accept=".html" required>
+                                <span class="file-name" id="fileName">No file selected</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Upload Topic</button>
                     </form>
                 </div>
             </section>
@@ -554,8 +577,8 @@
     </div>
 
     <script>
-        // Configuration
-        const API_BASE_URL = 'http://localhost:3001/api';
+        // Configuration - UPDATE THIS TO YOUR RENDER URL
+        const API_BASE_URL = 'https://xed21-platform.onrender.com/api';
         let currentSection = 'dashboard';
         let allTopics = [];
 
@@ -726,6 +749,11 @@
                 return;
             }
 
+            if (!document.getElementById('selectedGrade').value) {
+                showAlert('Please select a grade', 'error');
+                return;
+            }
+
             formData.append('topicFile', fileInput.files[0]);
             formData.append('grade', document.getElementById('selectedGrade').value);
             formData.append('subject', document.getElementById('subject').value);
@@ -890,9 +918,12 @@
             }
         }
 
-       // Close modal on click outside
+        // Close modal on click outside
         document.getElementById('previewModal').addEventListener('click', (e) => {
             if (e.target.id === 'previewModal') {
                 closeModal();
             }
-        })
+        });
+    </script>
+</body>
+</html>
