@@ -1,1 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XED21 Admin Panel - Content Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h1 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 16px;
+            margin-bottom: 5px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: #34495e;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            display: inline-block;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #2980b9;
+        }
+
+        .file-name {
+            margin-left: 10px;
+            color: #7f8c8d;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #27ae60;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Topics List */
+        .topics-list {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .topics-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .topics-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .topics-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .topics-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                margin-left: 200px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: #2c3e50;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+        }
+
+        /* Grade selector grid */
+        .grade-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .grade-option {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .grade-option:hover {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+
+        .grade-option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <h1>🎓 XED21 Admin</h1>
+            <a href="#" class="nav-item active" onclick="showSection('dashboard')">
+                <i>📊</i> Dashboard
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('upload')">
+                <i>⬆️</i> Upload Content
+            </a>
+            <a href="#" class="nav-item" onclick="showSection('manage')">
+                <i>📁</i> Manage Topics
+            </a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section">
+                <div class="header">
+                    <h2>Dashboard</h2>
+                    <p>Overview of your educational content</p>
+                </div>
+
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Total Topics</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Grades Covered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Total Files</div>
+                    </div>
+                </div>
+
+                <div class="topics-list">
+                    <h3>Recent Topics</h3>
+                    <div id="recentTopics" class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading topics...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section id="upload-section" class="content-section" style="display: none;">
+                <div class="header">
+                    <h2>Upload Topic Content</h2>
+                    <p>Add new educational content to the platform</p>
+                </div>
+
+                <div class="alert" id="uploadAlert"></div>
+
+                <div class="upload-section">
+                    <form id="uploadForm">
+                        <div class="form-group">
+                            <label for="grade">Grade Level</label>
+                            <div class="grade-selector" id="gradeSelector">
+                                <!-- Grade options will be generated here -->
+                            </div>
+                            <input type="hidden" id="selectedGrade" name="grade" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select Subject</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Science">Science</option>
+                                <option value="EVS">Environmental Studies (EVS)</option>
+                                <option value="English">English</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Social Studies">Social Studies</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="topicName">Topic Name</label>
+                            <input type="text" id="topicName" name="topicName" required 
+                                   placeholder="e.g., Numbers 1 to 9, Fibre to Fabric">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="topicDescription">Topic Description (Optional)</label>
+                            <textarea id="topicDescription" name="topicDescription" rows="3" 
+                                      placeholder="Brief description of the topic content"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>HTML File</label>
+                            <div class="file-input-wrapper">
+                                <label for="topicFile" class="file-input-label">
+                                    Choose HTML File
+                                </label>
+                                <input type="file" id="topicFile" name="topicFile" accept=".html" required>
+                                <span class="file-name" id="fileName">No file selected</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Upload Topic</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Manage Section -->
+            <section id="manage-section" class="content-section" style="display: none;">
+                <div class="header">
+                    <h2>Manage Topics</h2>
+                    <p>View, edit, and delete existing content</p>
+                </div>
+
+                <div class="topics-list">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Search topics by name, grade, or subject...">
+                    </div>
+
+                    <div id="topicsTableContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading topics...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Topic Preview</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <iframe id="previewFrame" class="preview-frame"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:3001/api';
+        let currentSection = 'dashboard';
+        let allTopics = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeGradeSelector();
+            loadDashboard();
+            setupEventListeners();
+        });
+
+        // Initialize grade selector
+        function initializeGradeSelector() {
+            const gradeSelector = document.getElementById('gradeSelector');
+            for (let i = 1; i <= 12; i++) {
+                const gradeOption = document.createElement('div');
+                gradeOption.className = 'grade-option';
+                gradeOption.textContent = i;
+                gradeOption.dataset.grade = i;
+                gradeOption.addEventListener('click', () => selectGrade(i));
+                gradeSelector.appendChild(gradeOption);
+            }
+        }
+
+        // Select grade
+        function selectGrade(grade) {
+            document.querySelectorAll('.grade-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`[data-grade="${grade}"]`).classList.add('selected');
+            document.getElementById('selectedGrade').value = grade;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Upload form
+            document.getElementById('uploadForm').addEventListener('submit', handleUpload);
+            
+            // File input
+            document.getElementById('topicFile').addEventListener('change', (e) => {
+                const fileName = e.target.files[0]?.name || 'No file selected';
+                document.getElementById('fileName').textContent = fileName;
+            });
+
+            // Search
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                filterTopics(e.target.value);
+            });
+        }
+
+        // Show section
+        function showSection(section) {
+            // Update active nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.style.display = 'none';
+            });
+
+            // Show selected section
+            document.getElementById(`${section}-section`).style.display = 'block';
+            currentSection = section;
+
+            // Load section data
+            if (section === 'dashboard') {
+                loadDashboard();
+            } else if (section === 'manage') {
+                loadTopics();
+            }
+        }
+
+        // Toggle sidebar (mobile)
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // Load dashboard
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stats`);
+                const stats = await response.json();
+
+                // Update stats
+                const statsGrid = document.getElementById('statsGrid');
+                let gradesCovered = 0;
+                for (let grade in stats.gradeStats) {
+                    if (stats.gradeStats[grade].topics > 0) {
+                        gradesCovered++;
+                    }
+                }
+
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.totalTopics}</div>
+                        <div class="stat-label">Total Topics</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${gradesCovered}</div>
+                        <div class="stat-label">Grades Covered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.totalFiles}</div>
+                        <div class="stat-label">Total Files</div>
+                    </div>
+                `;
+
+                // Load recent topics
+                const topicsResponse = await fetch(`${API_BASE_URL}/topics`);
+                const topics = await topicsResponse.json();
+                displayRecentTopics(topics);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('Error loading dashboard data', 'error');
+            }
+        }
+
+        // Display recent topics
+        function displayRecentTopics(topics) {
+            const container = document.getElementById('recentTopics');
+            const topicsArray = Object.values(topics);
+            
+            if (topicsArray.length === 0) {
+                container.innerHTML = '<p>No topics uploaded yet.</p>';
+                return;
+            }
+
+            // Sort by upload date and take recent 5
+            const recentTopics = topicsArray
+                .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))
+                .slice(0, 5);
+
+            container.innerHTML = `
+                <table class="topics-table">
+                    <thead>
+                        <tr>
+                            <th>Topic Name</th>
+                            <th>Grade</th>
+                            <th>Subject</th>
+                            <th>Uploaded</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${recentTopics.map(topic => `
+                            <tr>
+                                <td>${topic.name}</td>
+                                <td>Grade ${topic.grade}</td>
+                                <td>${topic.subject}</td>
+                                <td>${new Date(topic.uploadedAt).toLocaleDateString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Handle upload
+        async function handleUpload(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('topicFile');
+            
+            if (!fileInput.files[0]) {
+                showAlert('Please select a file', 'error');
+                return;
+            }
+
+            formData.append('topicFile', fileInput.files[0]);
+            formData.append('grade', document.getElementById('selectedGrade').value);
+            formData.append('subject', document.getElementById('subject').value);
+            formData.append('topicName', document.getElementById('topicName').value);
+            formData.append('topicDescription', document.getElementById('topicDescription').value);
+
+            try {
+                showAlert('Uploading topic...', 'success');
+                
+                const response = await fetch(`${API_BASE_URL}/topics/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Topic uploaded successfully!', 'success');
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('fileName').textContent = 'No file selected';
+                    document.querySelectorAll('.grade-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                } else {
+                    showAlert(result.error || 'Upload failed', 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showAlert('Failed to upload topic', 'error');
+            }
+        }
+
+        // Load topics for management
+        async function loadTopics() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/topics`);
+                const topics = await response.json();
+                allTopics = Object.values(topics);
+                displayTopicsTable(allTopics);
+            } catch (error) {
+                console.error('Error loading topics:', error);
+                showAlert('Error loading topics', 'error');
+            }
+        }
+
+        // Display topics table
+        function displayTopicsTable(topics) {
+            const container = document.getElementById('topicsTableContainer');
+            
+            if (topics.length === 0) {
+                container.innerHTML = '<p>No topics found.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="topics-table">
+                    <thead>
+                        <tr>
+                            <th>Topic Name</th>
+                            <th>Grade</th>
+                            <th>Subject</th>
+                            <th>Description</th>
+                            <th>Uploaded</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${topics.map(topic => `
+                            <tr>
+                                <td>${topic.name}</td>
+                                <td>Grade ${topic.grade}</td>
+                                <td>${topic.subject}</td>
+                                <td>${topic.description || '-'}</td>
+                                <td>${new Date(topic.uploadedAt).toLocaleDateString()}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-primary btn-small" onclick="previewTopic('${topic.id}')">Preview</button>
+                                        <button class="btn btn-danger btn-small" onclick="deleteTopic('${topic.id}')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Filter topics
+        function filterTopics(searchTerm) {
+            const filtered = allTopics.filter(topic => {
+                const search = searchTerm.toLowerCase();
+                return topic.name.toLowerCase().includes(search) ||
+                       topic.subject.toLowerCase().includes(search) ||
+                       topic.grade.toString().includes(search) ||
+                       (topic.description && topic.description.toLowerCase().includes(search));
+            });
+            displayTopicsTable(filtered);
+        }
+
+        // Preview topic
+        async function previewTopic(topicId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/topics/${topicId}`);
+                const topic = await response.json();
+                
+                // Create blob URL for preview
+                const blob = new Blob([topic.content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                document.getElementById('previewFrame').src = url;
+                document.getElementById('previewModal').classList.add('active');
+            } catch (error) {
+                console.error('Error previewing topic:', error);
+                showAlert('Failed to preview topic', 'error');
+            }
+        }
+
+        // Delete topic
+        async function deleteTopic(topicId) {
+            if (!confirm('Are you sure you want to delete this topic?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/topics/${topicId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showAlert('Topic deleted successfully', 'success');
+                    loadTopics(); // Reload topics
+                } else {
+                    showAlert('Failed to delete topic', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting topic:', error);
+                showAlert('Failed to delete topic', 'error');
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('previewModal').classList.remove('active');
+            const iframe = document.getElementById('previewFrame');
+            const src = iframe.src;
+            iframe.src = '';
+            if (src.startsWith('blob:')) {
+                URL.revokeObjectURL(src);
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alert = document.getElementById('uploadAlert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Close modal on click outside
+        document.getElementById('previewModal').addEventListener('click', (e) => {
+            if (e.target.id === 'previewModal') {
+                closeModal();
+            }
+        })
