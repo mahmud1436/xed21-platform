@@ -261,6 +261,15 @@
             backdrop-filter: blur(10px);
             padding: 2rem;
             border-radius: 20px;
+            position: relative;
+        }
+
+        .topic-iframe {
+            width: 100%;
+            min-height: 800px;
+            border: none;
+            border-radius: 10px;
+            background: white;
         }
 
         /* Loading spinner */
@@ -323,6 +332,24 @@
             border: 2px dashed #dee2e6;
         }
 
+        /* Fullscreen button for topic content */
+        .fullscreen-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .fullscreen-btn:hover {
+            background: #5a6fd8;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero-title {
@@ -342,7 +369,7 @@
 <body>
     <header class="header">
         <div class="nav-container">
-            <a href="#" class="logo">
+            <a href="#" class="logo" onclick="platform.showLandingPage()">
                 🎓 XED21
             </a>
             <button id="loginBtn" class="login-btn">School Login</button>
@@ -423,6 +450,7 @@
             <!-- Topic Content -->
             <div id="topicContentContainer" class="topic-content-container">
                 <button class="back-btn" onclick="platform.showTopics(platform.currentSubject)">← Back to Topics</button>
+                <button class="fullscreen-btn" onclick="platform.toggleFullscreen()">⛶ Fullscreen</button>
                 <div id="topicContent">
                     <!-- Topic content will be loaded here -->
                 </div>
@@ -433,11 +461,13 @@
     <script>
         class EduLearnPlatform {
             constructor() {
+                // UPDATE THIS URL AFTER DEPLOYING TO RENDER
+                this.API_BASE_URL = 'http://localhost:3001/api'; // Change to: https://xed21-backend.onrender.com/api
                 this.currentUser = null;
                 this.currentGrade = null;
                 this.currentSubject = null;
                 this.curriculum = null;
-                this.topicsData = null;
+                this.topicsData = {};
                 this.init();
             }
 
@@ -453,27 +483,25 @@
             }
 
             async loadData() {
-                // Load curriculum data
                 try {
-                    // For GitHub Pages, we'll use a fallback structure if external files aren't available
-                    this.curriculum = await this.loadCurriculumData();
-                } catch (error) {
-                    console.log('Using fallback curriculum data');
-                    this.curriculum = this.getFallbackCurriculum();
-                }
-            }
-
-            async loadCurriculumData() {
-                // Try to load from external file, fallback to embedded data
-                try {
-                    const response = await fetch('data/curriculum.json');
+                    // Load curriculum from backend
+                    const response = await fetch(`${this.API_BASE_URL}/curriculum`);
                     if (response.ok) {
-                        return await response.json();
+                        this.curriculum = await response.json();
+                    } else {
+                        throw new Error('Failed to load curriculum');
+                    }
+
+                    // Load topics data
+                    const topicsResponse = await fetch(`${this.API_BASE_URL}/topics`);
+                    if (topicsResponse.ok) {
+                        this.topicsData = await topicsResponse.json();
                     }
                 } catch (error) {
-                    console.log('External curriculum file not found, using embedded data');
+                    console.error('Failed to load data from backend:', error);
+                    // Use fallback data if backend is not available
+                    this.curriculum = this.getFallbackCurriculum();
                 }
-                return this.getFallbackCurriculum();
             }
 
             getFallbackCurriculum() {
@@ -484,22 +512,12 @@
                                 'Mathematics': {
                                     icon: '🔢',
                                     description: 'Numbers, shapes, and basic operations',
-                                    topics: [
-                                        { name: 'Numbers 1 to 9', file: 'topics/grade-1/mathematics/numbers-1-to-9.html', id: 'g1-math-numbers' },
-                                        { name: 'Addition', file: 'topics/grade-1/mathematics/addition.html', id: 'g1-math-addition' },
-                                        { name: 'Subtraction', file: 'topics/grade-1/mathematics/subtraction.html', id: 'g1-math-subtraction' },
-                                        { name: 'Shapes and Space', file: 'topics/grade-1/mathematics/shapes-and-space.html', id: 'g1-math-shapes' }
-                                    ]
+                                    topics: []
                                 },
                                 'EVS': {
                                     icon: '🌱',
                                     description: 'Environmental Studies - exploring the world around us',
-                                    topics: [
-                                        { name: 'My Family and Friends', file: 'topics/grade-1/evs/my-family-and-friends.html', id: 'g1-evs-family' },
-                                        { name: 'Food We Eat', file: 'topics/grade-1/evs/food-we-eat.html', id: 'g1-evs-food' },
-                                        { name: 'Water', file: 'topics/grade-1/evs/water.html', id: 'g1-evs-water' },
-                                        { name: 'Animals', file: 'topics/grade-1/evs/animals.html', id: 'g1-evs-animals' }
-                                    ]
+                                    topics: []
                                 }
                             }
                         },
@@ -508,20 +526,12 @@
                                 'Mathematics': {
                                     icon: '🔢',
                                     description: 'Introduction to advanced mathematical concepts',
-                                    topics: [
-                                        { name: 'Knowing Our Numbers', file: 'topics/grade-6/mathematics/knowing-our-numbers.html', id: 'g6-math-numbers' },
-                                        { name: 'Whole Numbers', file: 'topics/grade-6/mathematics/whole-numbers.html', id: 'g6-math-whole' },
-                                        { name: 'Playing with Numbers', file: 'topics/grade-6/mathematics/playing-with-numbers.html', id: 'g6-math-playing' }
-                                    ]
+                                    topics: []
                                 },
                                 'Science': {
                                     icon: '🔬',
                                     description: 'Foundation of scientific thinking and inquiry',
-                                    topics: [
-                                        { name: 'Food: Where Does It Come From?', file: 'topics/grade-6/science/food-sources.html', id: 'g6-sci-food' },
-                                        { name: 'Components of Food', file: 'topics/grade-6/science/food-components.html', id: 'g6-sci-components' },
-                                        { name: 'Fibre to Fabric', file: 'topics/grade-6/science/fibre-to-fabric.html', id: 'g6-sci-fibre' }
-                                    ]
+                                    topics: []
                                 }
                             }
                         }
@@ -529,39 +539,28 @@
                 };
             }
 
-            async loadTopicContent(topicFile) {
+            async loadTopicContent(topicId) {
                 this.showLoading();
                 try {
-                    const response = await fetch(topicFile);
+                    const response = await fetch(`${this.API_BASE_URL}/topics/${topicId}`);
                     if (response.ok) {
-                        const content = await response.text();
+                        const topic = await response.json();
                         this.hideLoading();
-                        return content;
+                        return topic.content;
                     }
                 } catch (error) {
                     console.error('Failed to load topic content:', error);
                 }
                 this.hideLoading();
-                return this.getPlaceholderContent(topicFile);
+                return this.getPlaceholderContent();
             }
 
-            getPlaceholderContent(topicFile) {
+            getPlaceholderContent() {
                 return `
                     <div class="content-placeholder">
-                        <h2>Content File Ready</h2>
-                        <p><strong>File path:</strong> ${topicFile}</p>
-                        <p>Create this HTML file in your repository to add the topic content.</p>
-                        <div style="background: white; padding: 1.5rem; border-radius: 8px; margin: 1rem 0; text-align: left;">
-                            <h4>Sample Topic Content Structure:</h4>
-                            <pre style="background: #f8f9fa; padding: 1rem; border-radius: 4px; overflow-x: auto;">
-&lt;div class="topic-content"&gt;
-    &lt;h2&gt;Topic Title&lt;/h2&gt;
-    &lt;div class="lesson-section"&gt;
-        &lt;h3&gt;Introduction&lt;/h3&gt;
-        &lt;p&gt;Your content here...&lt;/p&gt;
-    &lt;/div&gt;
-&lt;/div&gt;</pre>
-                        </div>
+                        <h2>Content Not Available</h2>
+                        <p>This topic content is not available yet.</p>
+                        <p>Please check back later or contact your administrator.</p>
                     </div>
                 `;
             }
@@ -631,14 +630,19 @@
                     gradeCard.className = 'grade-card';
                     gradeCard.dataset.grade = grade;
                     
-                    const hasContent = this.curriculum.grades[grade];
-                    const subjectsText = grade <= 5 ? 'Mathematics & EVS' : 'Mathematics & Science';
+                    const hasContent = this.curriculum.grades[grade] && 
+                                     Object.keys(this.curriculum.grades[grade].subjects || {}).length > 0;
+                    
+                    const subjectsCount = hasContent ? Object.keys(this.curriculum.grades[grade].subjects).length : 0;
+                    const topicsCount = hasContent ? 
+                        Object.values(this.curriculum.grades[grade].subjects)
+                            .reduce((sum, subject) => sum + (subject.topics?.length || 0), 0) : 0;
                     
                     gradeCard.innerHTML = `
                         <div class="grade-number">${grade}</div>
                         <h3>Grade ${grade}</h3>
-                        <p>${subjectsText}</p>
-                        ${!hasContent ? '<small style="color: #dc3545;">Content in development</small>' : ''}
+                        <p>${subjectsCount} Subjects${topicsCount > 0 ? `, ${topicsCount} Topics` : ''}</p>
+                        ${!hasContent ? '<small style="color: #dc3545;">No content available</small>' : ''}
                     `;
                     
                     if (hasContent) {
@@ -660,7 +664,7 @@
                 document.getElementById('gradeTitle').textContent = `Grade ${grade} - Subjects`;
 
                 const gradeData = this.curriculum.grades[grade];
-                if (!gradeData) {
+                if (!gradeData || !gradeData.subjects) {
                     this.showError(`Grade ${grade} content not available yet`);
                     return;
                 }
@@ -675,9 +679,17 @@
                     subjectCard.innerHTML = `
                         <div class="subject-title">${subject.icon} ${subjectName}</div>
                         <div class="subject-description">${subject.description}</div>
-                        <p style="margin-top: 1rem; opacity: 0.8;">${subject.topics.length} Topics Available</p>
+                        <p style="margin-top: 1rem; opacity: 0.8;">${subject.topics?.length || 0} Topics Available</p>
                     `;
-                    subjectCard.addEventListener('click', () => this.showTopics(subjectName));
+                    
+                    if (subject.topics && subject.topics.length > 0) {
+                        subjectCard.addEventListener('click', () => this.showTopics(subjectName));
+                    } else {
+                        subjectCard.style.opacity = '0.7';
+                        subjectCard.style.cursor = 'not-allowed';
+                        subjectCard.innerHTML += '<small style="opacity: 0.7;">No topics uploaded yet</small>';
+                    }
+                    
                     container.appendChild(subjectCard);
                 });
             }
@@ -694,14 +706,24 @@
                 const container = document.getElementById('topicsGrid');
                 container.innerHTML = '';
 
+                if (!subject.topics || subject.topics.length === 0) {
+                    container.innerHTML = '<p>No topics available for this subject yet.</p>';
+                    return;
+                }
+
                 subject.topics.forEach((topic, index) => {
                     const topicCard = document.createElement('div');
                     topicCard.className = 'topic-card';
                     topicCard.dataset.topicName = topic.name.toLowerCase();
+                    
+                    // Get additional topic info if available
+                    const topicInfo = this.topicsData[topic.id] || {};
+                    
                     topicCard.innerHTML = `
                         <h4>${topic.name}</h4>
-                        <p>Chapter ${index + 1} - Click to open content</p>
-                        <small style="color: #6c757d;">File: ${topic.file}</small>
+                        <p>Chapter ${index + 1}</p>
+                        ${topicInfo.description ? `<p style="font-size: 0.9em; color: #666; margin-top: 0.5rem;">${topicInfo.description}</p>` : ''}
+                        <small style="color: #6c757d;">Click to open content</small>
                     `;
                     topicCard.addEventListener('click', () => this.showTopicContent(topic));
                     container.appendChild(topicCard);
@@ -713,8 +735,42 @@
                 document.getElementById('topicContentContainer').style.display = 'block';
                 
                 const contentArea = document.getElementById('topicContent');
-                const content = await this.loadTopicContent(topic.file);
-                contentArea.innerHTML = content;
+                
+                // If topic has an ID (from backend), load from API
+                if (topic.id) {
+                    const content = await this.loadTopicContent(topic.id);
+                    
+                    // Create an iframe to display the content
+                    contentArea.innerHTML = `
+                        <iframe 
+                            id="topicFrame"
+                            class="topic-iframe" 
+                            srcdoc="${this.escapeHtml(content)}"
+                            sandbox="allow-scripts allow-same-origin"
+                        ></iframe>
+                    `;
+                } else {
+                    contentArea.innerHTML = this.getPlaceholderContent();
+                }
+            }
+
+            escapeHtml(html) {
+                const div = document.createElement('div');
+                div.textContent = html;
+                return div.innerHTML;
+            }
+
+            toggleFullscreen() {
+                const iframe = document.getElementById('topicFrame');
+                if (iframe) {
+                    if (iframe.requestFullscreen) {
+                        iframe.requestFullscreen();
+                    } else if (iframe.webkitRequestFullscreen) {
+                        iframe.webkitRequestFullscreen();
+                    } else if (iframe.msRequestFullscreen) {
+                        iframe.msRequestFullscreen();
+                    }
+                }
             }
 
             filterGrades(searchTerm) {
@@ -730,26 +786,11 @@
                 const topicCards = document.querySelectorAll('.topic-card');
                 topicCards.forEach(card => {
                     const topicName = card.dataset.topicName || '';
-                    const matches = topicName.includes(searchTerm.toLowerCase());
+                    const topicText = card.textContent.toLowerCase();
+                    const matches = topicName.includes(searchTerm.toLowerCase()) || 
+                                  topicText.includes(searchTerm.toLowerCase());
                     card.style.display = matches ? 'block' : 'none';
                 });
-            }
-
-            // Public methods for navigation
-            goToDashboard() {
-                this.showDashboard();
-            }
-
-            goToSubjects() {
-                if (this.currentGrade) {
-                    this.showSubjects(this.currentGrade);
-                }
-            }
-
-            goToTopics() {
-                if (this.currentSubject) {
-                    this.showTopics(this.currentSubject);
-                }
             }
         }
 
@@ -758,30 +799,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             platform = new EduLearnPlatform();
         });
-
-        // Global navigation functions for onclick handlers
-        function goToDashboard() {
-            platform.goToDashboard();
-        }
-
-        function goToSubjects() {
-            platform.goToSubjects();
-        }
-
-        function goToTopics() {
-            platform.goToTopics();
-        }
     </script>
-
-    <!-- Optional: Google Analytics -->
-    <!-- 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'GA_TRACKING_ID');
-    </script>
-    -->
 </body>
 </html>
