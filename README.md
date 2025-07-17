@@ -5,7 +5,27 @@ A comprehensive NCERT learning platform for grades 1-12 with interactive educati
 ## 🚀 Live Demo
 
 - **Student Platform**: [https://mahmud1436.github.io/xed21-platform/](https://mahmud1436.github.io/xed21-platform/)
-- **Admin Panel**: [https://xed21-backend.onrender.com/admin.html](https://xed21-backend.onrender.com/admin.html) (after deployment)
+- **Admin Panel**: [https://xed21-backend.onrender.com/admin.html](https://xed21-backend.onrender.com/admin.html)  
+  *(Make sure your backend is deployed and the API URL in `admin.html` is set to your Render backend)*
+
+## 🔗 API URL Configuration
+
+For production, update the API URL in both `index.html` and `admin.html`:
+
+```javascript
+// In index.html and admin.html
+const API_BASE_URL = "https://xed21-backend.onrender.com/api";
+```
+
+For local development, use:
+
+```javascript
+const API_BASE_URL = "http://localhost:3001/api";
+```
+
+**Note:**  
+- The admin panel (`admin.html`) must reference the correct API URL for uploads and management.
+- The student platform (`index.html`) must reference the correct API URL for fetching curriculum and topics.
 
 ## 📚 Features
 

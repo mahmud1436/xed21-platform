@@ -11,12 +11,9 @@ const PORT = process.env.PORT || 3001;
 // CORS configuration for production
 const corsOptions = {
     origin: [
-        'https://mahmud1436.github.io',  // Fixed: removed trailing slash and /xed21-platform
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://127.0.0.1:5500'  // For Live Server testing
-    ],
-    credentials: true
+        'https://mahmud1436.github.io',
+        'https://xed21-platform.onrender.com'
+    ]
 };
 
 app.use(cors(corsOptions));
