@@ -461,8 +461,8 @@
     <script>
         class EduLearnPlatform {
             constructor() {
-                // UPDATE THIS URL AFTER DEPLOYING TO RENDER
-                this.API_BASE_URL = 'https://xed21-platform.onrender.com/api'; // Change to: https://xed21-backend.onrender.com/api
+                // UPDATED TO CORRECT BACKEND URL
+                this.API_BASE_URL = 'https://xed21-platform.onrender.com/api';
                 this.currentUser = null;
                 this.currentGrade = null;
                 this.currentSubject = null;
@@ -741,23 +741,18 @@
                     const content = await this.loadTopicContent(topic.id);
                     
                     // Create an iframe to display the content
+                    // Only escape quotes to prevent breaking the srcdoc attribute
                     contentArea.innerHTML = `
                         <iframe 
                             id="topicFrame"
                             class="topic-iframe" 
-                            srcdoc="${this.escapeHtml(content)}"
+                            srcdoc="${content.replace(/"/g, '&quot;')}"
                             sandbox="allow-scripts allow-same-origin"
                         ></iframe>
                     `;
                 } else {
                     contentArea.innerHTML = this.getPlaceholderContent();
                 }
-            }
-
-            escapeHtml(html) {
-                const div = document.createElement('div');
-                div.textContent = html;
-                return div.innerHTML;
             }
 
             toggleFullscreen() {
