@@ -367,96 +367,93 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="nav-container">
-            <a href="#" class="logo" onclick="platform.showLandingPage()">
-                🎓 XED21
-            </a>
-            <button id="loginBtn" class="login-btn">School Login</button>
+  <!-- Hero Section -->
+  <section style="background: linear-gradient(90deg, #4f8cff 0%, #38e8ff 100%); color: #fff; padding: 60px 0; text-align: center;">
+    <img src="https://img.icons8.com/color/96/000000/education.png" alt="EdTech Logo" style="width:96px;">
+    <h1 style="font-size: 3em; margin: 20px 0 10px;">Welcome to XED21 Platform</h1>
+    <p style="font-size: 1.3em; max-width: 600px; margin: 0 auto;">
+      Gamified learning for grades 1-12. Interactive, fun, and NCERT-aligned!
+    </p>
+    <a href="#subscribe" style="display:inline-block; margin-top:30px; padding:15px 40px; background:#fff; color:#4f8cff; font-weight:bold; border-radius:30px; font-size:1.2em; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.1);">Get Started</a>
+  </section>
+
+  <!-- Subscription Banner -->
+  <section id="subscribe" style="background:#f7faff; padding:40px 0; text-align:center;">
+    <h2 style="font-size:2em; margin-bottom:20px;">Choose Your Subscription</h2>
+    <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap;">
+      <div style="background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:30px; width:260px;">
+        <img src="https://img.icons8.com/fluency/48/000000/student-male.png" alt="Student" />
+        <h3>Student</h3>
+        <p>Access all grades, subjects, and gamified topics.</p>
+        <div style="font-size:1.5em; font-weight:bold; color:#4f8cff;">₹199/mo</div>
+        <button style="margin-top:15px; padding:10px 24px; background:#4f8cff; color:#fff; border:none; border-radius:8px; font-weight:bold;">Subscribe</button>
+      </div>
+      <div style="background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:30px; width:260px;">
+        <img src="https://img.icons8.com/fluency/48/000000/teacher.png" alt="Teacher" />
+        <h3>Teacher</h3>
+        <p>Manage classes, assign games, and track progress.</p>
+        <div style="font-size:1.5em; font-weight:bold; color:#4f8cff;">₹299/mo</div>
+        <button style="margin-top:15px; padding:10px 24px; background:#4f8cff; color:#fff; border:none; border-radius:8px; font-weight:bold;">Subscribe</button>
+      </div>
+      <div style="background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:30px; width:260px;">
+        <img src="https://img.icons8.com/fluency/48/000000/school-building.png" alt="School" />
+        <h3>School</h3>
+        <p>Bulk access, analytics, and custom gamification.</p>
+        <div style="font-size:1.5em; font-weight:bold; color:#4f8cff;">Contact Us</div>
+        <button style="margin-top:15px; padding:10px 24px; background:#4f8cff; color:#fff; border:none; border-radius:8px; font-weight:bold;">Contact</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section style="background:#38e8ff; color:#fff; padding:50px 0; text-align:center;">
+    <h2 style="font-size:2em;">Ready to Gamify Your Learning?</h2>
+    <p style="font-size:1.2em; max-width:600px; margin:0 auto 30px;">
+      Join thousands of students and teachers using XED21 to make learning fun and effective.
+    </p>
+    <a href="#contact" style="display:inline-block; padding:15px 40px; background:#fff; color:#38e8ff; font-weight:bold; border-radius:30px; font-size:1.2em; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.1);">Contact Us</a>
+  </section>
+
+  <!-- Contact Us Section -->
+  <section id="contact" style="background:#f7faff; padding:40px 0;">
+    <div style="max-width:600px; margin:0 auto; background:#fff; border-radius:16px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:30px;">
+      <h2 style="text-align:center; margin-bottom:20px;">Contact Us</h2>
+      <form>
+        <div style="margin-bottom:15px;">
+          <label for="name" style="display:block; margin-bottom:5px;">Name:</label>
+          <input type="text" id="name" name="name" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ddd;">
         </div>
-    </header>
-
-    <main class="main-content">
-        <div class="container">
-            <!-- Loading Spinner -->
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <p>Loading content...</p>
-            </div>
-
-            <!-- Landing Page -->
-            <div id="landingPage" class="landing-page">
-                <h1 class="hero-title">Welcome to XED21</h1>
-                <p class="hero-subtitle">Your comprehensive NCERT learning platform for grades 1-12</p>
-                
-                <div class="features">
-                    <div class="feature-card">
-                        <div class="feature-icon">📚</div>
-                        <h3>NCERT Aligned</h3>
-                        <p>Complete curriculum coverage following NCERT guidelines for all subjects</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🎯</div>
-                        <h3>Grade-wise Learning</h3>
-                        <p>Structured learning paths tailored for each grade level</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🔬</div>
-                        <h3>Interactive Content</h3>
-                        <p>Engaging lessons in Mathematics, Science, and Environmental Studies</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard -->
-            <div id="dashboard" class="dashboard">
-                <div class="dashboard-header">
-                    <h2>Welcome back, <span id="schoolName"></span>!</h2>
-                    <p>Select your subscribed grades to access content</p>
-                </div>
-
-                <div class="search-container">
-                    <input type="text" id="gradeSearch" class="search-input" placeholder="Search grades...">
-                </div>
-
-                <div id="gradesContainer" class="grade-grid">
-                    <!-- Grades will be populated here -->
-                </div>
-            </div>
-
-            <!-- Subjects Container -->
-            <div id="subjectsContainer" class="subjects-container">
-                <button class="back-btn" onclick="platform.showDashboard()">← Back to Grades</button>
-                <h2 id="gradeTitle"></h2>
-                <div id="subjectsGrid" class="subjects-grid">
-                    <!-- Subjects will be populated here -->
-                </div>
-            </div>
-
-            <!-- Topics Container -->
-            <div id="topicsContainer" class="topics-container">
-                <button class="back-btn" onclick="platform.showSubjects(platform.currentGrade)">← Back to Subjects</button>
-                <h2 id="topicTitle"></h2>
-                
-                <div class="search-container">
-                    <input type="text" id="topicSearch" class="search-input" placeholder="Search topics...">
-                </div>
-
-                <div id="topicsGrid" class="topics-grid">
-                    <!-- Topics will be populated here -->
-                </div>
-            </div>
-
-            <!-- Topic Content -->
-            <div id="topicContentContainer" class="topic-content-container">
-                <button class="back-btn" onclick="platform.showTopics(platform.currentSubject)">← Back to Topics</button>
-                <button class="fullscreen-btn" onclick="platform.toggleFullscreen()">⛶ Fullscreen</button>
-                <div id="topicContent">
-                    <!-- Topic content will be loaded here -->
-                </div>
-            </div>
+        <div style="margin-bottom:15px;">
+          <label for="email" style="display:block; margin-bottom:5px;">Email:</label>
+          <input type="email" id="email" name="email" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ddd;">
         </div>
-    </main>
+        <div style="margin-bottom:15px;">
+          <label for="message" style="display:block; margin-bottom:5px;">Message:</label>
+          <textarea id="message" name="message" required style="width:100%; padding:8px; border-radius:6px; border:1px solid #ddd;"></textarea>
+        </div>
+        <button type="submit" style="background:#4f8cff; color:#fff; padding:10px 24px; border:none; border-radius:8px; font-weight:bold;">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:#222; color:#fff; padding:30px 0; text-align:center;">
+    <div style="margin-bottom:10px;">
+      <img src="https://img.icons8.com/color/48/000000/education.png" alt="EdTech Logo" style="vertical-align:middle;">
+      <span style="font-size:1.2em; font-weight:bold; margin-left:10px;">XED21 Platform</span>
+    </div>
+    <div style="margin-bottom:10px;">
+      <a href="mailto:support@xed21.com" style="color:#38e8ff; text-decoration:none; margin:0 10px;">
+        <img src="https://img.icons8.com/fluency/24/000000/new-post.png" alt="Email" style="vertical-align:middle;"> support@xed21.com
+      </a>
+      <a href="https://twitter.com/xed21" style="color:#38e8ff; text-decoration:none; margin:0 10px;">
+        <img src="https://img.icons8.com/color/24/000000/twitter--v1.png" alt="Twitter" style="vertical-align:middle;"> @xed21
+      </a>
+    </div>
+    <div>
+      &copy; 2025 XED21 Platform. All rights reserved.
+    </div>
+  </footer>
 
     <script>
         class EduLearnPlatform {
