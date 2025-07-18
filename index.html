@@ -55,21 +55,31 @@
         }
 
         .login-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 0.8rem 2rem;
+            background: #4f8cff;
+            color: #fff;
             border: none;
-            border-radius: 50px;
-            font-size: 1rem;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: bold;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            font-size: 1em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
         }
 
         .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Top bar for login */
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px 40px 0 0;
+            background: transparent;
+            position: relative;
+            z-index: 10;
         }
 
         /* Main Content */
@@ -350,6 +360,34 @@
             background: #5a6fd8;
         }
 
+        /* Modal styles */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            top:0; left:0; width:100vw; height:100vh;
+            background:rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-bg.active { display: flex; }
+
+        .login-modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+            min-width: 320px;
+            text-align: center;
+        }
+        .login-modal input {
+            width: 90%;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .hero-title {
@@ -367,6 +405,10 @@
     </style>
 </head>
 <body>
+  <div class="top-bar">
+    <button class="login-btn" onclick="showLoginModal()">Login</button>
+  </div>
+
   <!-- Hero Section -->
   <section style="background: linear-gradient(90deg, #4f8cff 0%, #38e8ff 100%); color: #fff; padding: 60px 0; text-align: center;">
     <img src="https://img.icons8.com/color/96/000000/education.png" alt="EdTech Logo" style="width:96px;">
@@ -454,6 +496,18 @@
       &copy; 2025 XED21 Platform. All rights reserved.
     </div>
   </footer>
+
+  <!-- Login Modal -->
+  <div class="modal-bg" id="loginModalBg">
+    <div class="login-modal">
+      <h2>Login</h2>
+      <input type="text" id="loginUsername" placeholder="Username" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button class="login-btn" onclick="handleLogin()">Sign In</button>
+      <div id="loginMsg" style="color:red; margin-top:10px;"></div>
+      <button style="margin-top:15px; background:#eee; color:#333; border:none; border-radius:8px; padding:6px 18px;" onclick="hideLoginModal()">Cancel</button>
+    </div>
+  </div>
 
     <script>
         class EduLearnPlatform {
@@ -791,6 +845,31 @@
         document.addEventListener('DOMContentLoaded', () => {
             platform = new EduLearnPlatform();
         });
+
+        function showLoginModal() {
+          document.getElementById('loginModalBg').classList.add('active');
+          document.getElementById('loginMsg').textContent = '';
+        }
+        function hideLoginModal() {
+          document.getElementById('loginModalBg').classList.remove('active');
+        }
+        function handleLogin() {
+          const username = document.getElementById('loginUsername').value;
+          const password = document.getElementById('loginPassword').value;
+          const msg = document.getElementById('loginMsg');
+          if (username === 'Mahmud66' && password === 'Abutaleb@35') {
+            msg.style.color = 'green';
+            msg.textContent = 'Login successful! Full access granted.';
+            hideLoginModal();
+            window.userRole = 'admin';
+            // Show grades section
+            document.getElementById('gradesSection').style.display = 'block';
+            // Optionally, hide other landing sections
+            // document.getElementById('landingSection').style.display = 'none';
+          } else {
+            msg.textContent = 'Invalid credentials or insufficient subscription.';
+          }
+        }
     </script>
 </body>
 </html>
